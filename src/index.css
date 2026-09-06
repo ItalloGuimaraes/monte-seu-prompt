@@ -1,0 +1,21 @@
+:root {
+  /* Cores de Interface */
+  --bg-principal: #F7F7F9;
+  --texto-principal: #2D2D2D;
+  --texto-secundario: #757575;
+  --cta-btn: #FF7A00;
+  --cta-hover: #CC6200;
+
+  /* Cores das Categorias (Borda/Texto e Fundo) */
+  --cor-papel: #2E75B6;      --bg-papel: #D6E4F0;
+  --cor-tarefa: #4C8C4A;     --bg-tarefa: #DCEEDB;
+  --cor-contexto: #BF9000;   --bg-contexto: #FCF1CE;
+  --cor-formato: #C0392B;    --bg-formato: #F8D9D6;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg-principal);
+  color: var(--texto-principal);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}

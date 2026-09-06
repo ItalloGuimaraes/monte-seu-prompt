@@ -1,0 +1,121 @@
+/* Estrutura estilo Trading Card Game */
+.carta-tcg {
+  width: 140px;
+  height: 200px;
+  border-radius: 12px;
+  padding: 6px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.1s, box-shadow 0.1s;
+  background-color: #fff; /* Fallback */
+}
+
+.carta-tcg:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.carta-tcg:active {
+  cursor: grabbing;
+}
+
+/* O miolo da carta */
+.carta-tcg .inner {
+  border-radius: 8px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border: 3px solid transparent;
+  overflow: hidden;
+}
+
+.carta-cabecalho {
+  color: #fff;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
+  padding: 8px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.carta-arte {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  background-color: #fff;
+  margin: 4px;
+  border-radius: 6px;
+}
+
+/* Aplicação das Cores Dinâmicas baseadas na categoria */
+.cat-papel { background-color: var(--bg-papel); }
+.cat-papel .inner { border-color: var(--cor-papel); }
+.cat-papel .carta-cabecalho { background-color: var(--cor-papel); }
+
+.cat-tarefa { background-color: var(--bg-tarefa); }
+.cat-tarefa .inner { border-color: var(--cor-tarefa); }
+.cat-tarefa .carta-cabecalho { background-color: var(--cor-tarefa); }
+
+.cat-contexto { background-color: var(--bg-contexto); }
+.cat-contexto .inner { border-color: var(--cor-contexto); }
+.cat-contexto .carta-cabecalho { background-color: var(--cor-contexto); }
+
+.cat-formato { background-color: var(--bg-formato); }
+.cat-formato .inner { border-color: var(--cor-formato); }
+.cat-formato .carta-cabecalho { background-color: var(--cor-formato); }
+
+/* =========================================
+   Versão Miniatura e Botão de Remover
+   ========================================= */
+.carta-tcg.mini {
+  width: 100px;
+  height: 140px;
+  position: relative; /* Necessário para ancorar o botão X */
+  cursor: default; /* Tira a "mãozinha" de arrastar */
+}
+.carta-tcg.mini .carta-cabecalho {
+  font-size: 10px;
+  min-height: 30px;
+  padding: 4px;
+}
+.carta-tcg.mini .carta-arte {
+  font-size: 32px;
+}
+
+/* O botão de "X" vermelho */
+.btn-remover {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #757575;
+  color: #2D2D2D;
+  font-weight: 900;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  padding: 0;
+  line-height: 1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.1s, background-color 0.1s, border-color 0.1s;
+}
+
+.btn-remover:hover {
+  transform: scale(1.1);
+  background-color: #FBE4E1;
+  color: #C0392B;
+  border-color: #C0392B;
+}

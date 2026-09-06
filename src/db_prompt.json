@@ -1,0 +1,165 @@
+{
+  "cartas": {
+    "papel_prof_fisica": { "titulo": "Professor de física animado", "icone": "🧑‍🏫", "categoria": "papel" },
+    "papel_pirata": { "titulo": "Um pirata ranzinza", "icone": "🏴‍☠️", "categoria": "papel" },
+    "papel_alienigena": { "titulo": "Alienígena confuso", "icone": "👽", "categoria": "papel" },
+    "papel_coach": { "titulo": "Coach quântico", "icone": "🚀", "categoria": "papel" },
+    "papel_vilao": { "titulo": "Vilão de novela das 8", "icone": "🦹‍♂️", "categoria": "papel" },
+    "papel_narrador": { "titulo": "Narrador esportivo", "icone": "⚽", "categoria": "papel" },
+    "papel_vovo": { "titulo": "Uma avó coruja", "icone": "👵", "categoria": "papel" },
+    "papel_rapper": { "titulo": "Rapper famoso", "icone": "🎤", "categoria": "papel" },
+
+    "tarefa_gravidade": { "titulo": "Explique a Lei da Gravidade", "icone": "🍎", "categoria": "tarefa" },
+    "tarefa_fotossintese": { "titulo": "Explique a fotossíntese", "icone": "🌱", "categoria": "tarefa" },
+    "tarefa_buraco_negro": { "titulo": "Explique o que é um buraco negro", "icone": "🌌", "categoria": "tarefa" },
+    "tarefa_pitagoras": { "titulo": "Explique o Teorema de Pitágoras", "icone": "📐", "categoria": "tarefa" },
+    "tarefa_ia": { "titulo": "Explique o que é Inteligência Artificial", "icone": "🧠", "categoria": "tarefa" },
+
+    "contexto_odeia": { "titulo": "Para quem odeia ciências", "icone": "😒", "categoria": "contexto" },
+    "contexto_crianca": { "titulo": "Para uma criança de 5 anos", "icone": "🧒", "categoria": "contexto" },
+    "contexto_fofoca": { "titulo": "Em tom de fofoca de bairro", "icone": "🗣️", "categoria": "contexto" },
+    "contexto_gamer": { "titulo": "Usando gírias de gamer", "icone": "🎮", "categoria": "contexto" },
+    "contexto_medieval": { "titulo": "Como se estivesse na Idade Média", "icone": "🏰", "categoria": "contexto" },
+    "contexto_urgente": { "titulo": "Como se o mundo fosse acabar", "icone": "🚨", "categoria": "contexto" },
+    "contexto_romantico": { "titulo": "Em um clima de romance", "icone": "💘", "categoria": "contexto" },
+    
+    "formato_tuite": { "titulo": "Como um tuíte", "icone": "🐦", "categoria": "formato" },
+    "formato_lista": { "titulo": "Em lista com emojis", "icone": "📋", "categoria": "formato" },
+    "formato_cordel": { "titulo": "Em forma de poema de cordel", "icone": "🪗", "categoria": "formato" },
+    "formato_receita": { "titulo": "Como uma receita de bolo", "icone": "🎂", "categoria": "formato" },
+    "formato_standup": { "titulo": "Como um roteiro de stand-up", "icone": "🎭", "categoria": "formato" },
+    "formato_codigo": { "titulo": "Explicado em código de programação", "icone": "💻", "categoria": "formato" }
+  },
+
+  "missoes": {
+    "missao_gravidade": {
+      "objetivo": "Faça a IA explicar a Lei da Gravidade",
+      "combinacoes": {
+        "contexto_odeia+formato_tuite+papel_prof_fisica+tarefa_gravidade": {
+          "resposta": "Presta atenção que essa é rápida: TUDO que tem massa puxa tudo que tem massa! É por isso que você não sai voando feito um balão. Newton sacou isso vendo uma maçã cair. Gravidade explicada, sem enrolação! ⬇️ #ciência",
+          "selo": "🏆 Prompt Nível Mestre"
+        },
+        "tarefa_gravidade": {
+          "resposta": "A gravidade é uma força atrativa que surge entre todos os corpos com massa. Isaac Newton formulou a lei da gravitação universal, que descreve essa força matemática...",
+          "selo": "⚠️ Prompt incompleto"
+        },
+        "contexto_odeia+papel_prof_fisica+tarefa_gravidade": {
+          "resposta": "Olha, eu sei que você não curte física, mas pense na gravidade como um abraço invisível da Terra! Ela puxa tudo para o centro. (Mas o texto ficou longo e sem formatação porque faltou definir o Formato).",
+          "selo": "🟡 Quase lá"
+        },
+        "contexto_fofoca+papel_coach+papel_prof_fisica+tarefa_gravidade": {
+          "resposta": "Menina, você não sabe da maior! A gravidade tá puxando todo mundo pra baixo! 🗣️ Mas mude seu mindset! Acelere seus prótons quânticos igual a maçã de Newton! 🚀 A força = massa vezes aceleração, entendeu gata?!",
+          "selo": "🤖💥 Alucinação!"
+        },
+        "combinacao_padrao": {
+          "resposta": "A IA tentou misturar todas essas cartas de uma vez e entrou em curto-circuito! Acabou gerando uma teoria bizarra de que a gravidade é causada por maçãs gigantes invisíveis empurrando as pessoas para baixo.\n\nColocar cartas repetidas, conflitantes ou em excesso confunde a máquina!",
+          "selo": "🤖💥 Alucinação!"
+        }
+      }
+    },
+
+    "missao_buraco_negro": {
+      "objetivo": "Faça a IA explicar o que é um Buraco Negro",
+      "combinacoes": {
+        "contexto_gamer+formato_lista+papel_alienigena+tarefa_buraco_negro": {
+          "resposta": "👽 Saudações, players da Terra! Cuidado com os buracos negros, eles são o boss final do universo:\n👾 1. É tipo uma zona de 'hit kill' no espaço, onde a gravidade é tão alta que nem a luz escapa!\n🛸 2. Se você cruzar o 'Horizonte de Eventos', é Game Over na certa.\n🌌 3. Eles dão spawn quando estrelas supermassivas colapsam.",
+          "selo": "🏆 Prompt Nível Mestre"
+        },
+        "tarefa_buraco_negro": {
+          "resposta": "Um buraco negro é uma região do espaço-tempo onde a gravidade é tão forte que nada, nem mesmo partículas ou radiação eletromagnética, pode escapar dela.",
+          "selo": "⚠️ Prompt incompleto"
+        },
+        "formato_receita+papel_vilao+tarefa_buraco_negro": {
+          "resposta": "MUHAHAHA! Querem destruir a luz? 🎂 Pegue uma estrela gigante, espere ela ficar sem combustível e colapse seu núcleo até virar uma singularidade! Misture com muita gravidade e pronto! Uma escuridão eterna!",
+          "selo": "🟡 Quase lá"
+        },
+        "contexto_crianca+formato_tuite+papel_alienigena+papel_pirata+tarefa_buraco_negro": {
+          "resposta": "Arrr, marujos do espaço! 🏴‍☠️ O buraco negro é um redemoinho gigante! Mas pera, eu venho de Marte 👽 bip bop... é um monstro que come criancinhas e estrelas? Yarrr, o tesouro está no horizonte de eventos! #EspaçoPirataAlienígena",
+          "selo": "🤖💥 Alucinação!"
+        },
+        "combinacao_padrao": {
+          "resposta": "A IA ficou completamente confusa com esse monte de cartas na mesa. Ela ignorou a física e começou a contar uma história sobre aspiradores de pó galácticos que sugam planetas para limpar o universo.\n\nQuando você pede muitas coisas sem coerência, a IA inventa mentiras!",
+          "selo": "🤖💥 Alucinação!"
+        }
+      }
+    },
+
+    "missao_fotossintese": {
+      "objetivo": "Faça a IA explicar a Fotossíntese",
+      "combinacoes": {
+        "contexto_crianca+formato_cordel+papel_vovo+tarefa_fotossintese": {
+          "resposta": "Vem cá, meu netinho amado, ouça a vó lhe contar 👵\nComo a plantinha no pasto faz seu almoço chegar 🪗\nEla puxa a luz do sol, bebe a água lá do chão 🌱\nE mistura com o ar, fazendo a refeição!\nSolta um ar limpinho pra gente respirar 🌬️\nÉ a mágica de Deus fazendo a folha brotar! ✨",
+          "selo": "🏆 Prompt Nível Mestre"
+        },
+        "tarefa_fotossintese": {
+          "resposta": "A fotossíntese é um processo físico-químico, a nível celular, realizado pelos seres vivos clorofilados, que utilizam dióxido de carbono e água para...",
+          "selo": "⚠️ Prompt incompleto"
+        },
+        "formato_lista+papel_coach+tarefa_fotossintese": {
+          "resposta": "🚀 SEJA COMO UMA PLANTA! \n1. Acorde cedo e puxe a energia do Sol!\n2. Hidrate-se! Suas raízes precisam de água!\n3. Transforme os problemas (CO2) em resultados (Glicose)!\nFaltou você me dizer PRA QUEM eu estou falando isso. Criança? Adulto?",
+          "selo": "🟡 Quase lá"
+        },
+        "formato_codigo+papel_rapper+tarefa_fotossintese": {
+          "resposta": "Yo yo! 🎤 check check... import Luz;\nSe (Agua && CO2) { print('Açúcar mano!'); }\nMas aí a rima não bate com o código JavaScript e a planta explode num erro 404 de rimas. SYNTAX ERROR na folha verde!",
+          "selo": "🤖💥 Alucinação!"
+        },
+        "combinacao_padrao": {
+          "resposta": "Você jogou as cartas de qualquer jeito e a IA bugou! Ela respondeu que a fotossíntese é quando os gnomos pintam as folhas de verde usando tinta a óleo e raios laser.\n\nExcesso de instrução ou cartas soltas sem contexto criam alucinações absurdas!",
+          "selo": "🤖💥 Alucinação!"
+        }
+      }
+    },
+
+    "missao_pitagoras": {
+      "objetivo": "Faça a IA explicar o Teorema de Pitágoras",
+      "combinacoes": {
+        "contexto_urgente+formato_standup+papel_narrador+tarefa_pitagoras": {
+          "resposta": "🚨 (Pega o microfone correndo) 🚨 OLHA O GOL! Quer dizer, OLHA O TRIÂNGULO RETÂNGULO! Gente, o mundo tá acabando em 5 minutos e vocês precisam saber disso! 🎭 Imagina que a hipotenusa é o atacante grandão: o quadrado dele é IGUAL à soma dos quadrados dos catetos que tão na zaga! Pensa rápido: a² = b² + c²! Corre e anota isso antes do meteoro bater! Haja coração!!! ⚽",
+          "selo": "🏆 Prompt Nível Mestre"
+        },
+        "tarefa_pitagoras": {
+          "resposta": "Em qualquer triângulo retângulo, o quadrado do comprimento da hipotenusa é igual à soma dos quadrados dos comprimentos dos catetos.",
+          "selo": "⚠️ Prompt incompleto"
+        },
+        "contexto_gamer+papel_prof_fisica+tarefa_pitagoras": {
+          "resposta": "🎮 Salve turma! Pega a visão geométrica aqui: no triângulo retângulo, a hipotenusa é o boss final, e os catetos são os minions. O XP do boss ao quadrado é igual a soma do XP dos minions ao quadrado! (Mas o texto ficou num formato contínuo e meio chato, faltou a carta de Formato).",
+          "selo": "🟡 Quase lá"
+        },
+        "contexto_romantico+formato_receita+papel_pirata+tarefa_pitagoras": {
+          "resposta": "Yarrr! 🏴‍☠️ Pegue 2 xícaras de catetos apaixonados 💘, jogue na panela do navio, misture com o quadrado do amor perfeito e asse no forno até virar uma hipotenusa crocante com perna de pau! (A receita não faz nenhum sentido matemático).",
+          "selo": "🤖💥 Alucinação!"
+        },
+        "combinacao_padrao": {
+          "resposta": "A IA se perdeu no meio desse excesso de comandos repetidos ou confusos. O resultado foi um delírio total dizendo que Pitágoras era, na verdade, um software de edição de triângulos do Windows 95.\n\nCartas aleatórias e empilhadas de qualquer jeito não resolvem o problema, só pioram!",
+          "selo": "🤖💥 Alucinação!"
+        }
+      }
+    },
+
+    "missao_ia": {
+      "objetivo": "Faça a IA explicar o que é a própria Inteligência Artificial",
+      "combinacoes": {
+        "contexto_medieval+formato_receita+papel_vilao+tarefa_ia": {
+          "resposta": "🦹‍♂️ MUHAHAHA! Tolos camponeses da Idade Média, querem forjar a Magia Proibida da Mente Artificial? 🏰 Anotem o feitiço: \n📜 Ingredientes:\n- 1 cérebro de silício (roubado do Rei!)\n- Milhões de pergaminhos de dados (para alimentar a criatura)\n- 3 gotas de algoritmos matemáticos.\n🔥 Modo de preparo: Jogue tudo no caldeirão dos Servidores, ordene que ela aprenda os padrões e BOOM! Uma mente de metal que fará de mim o imperador do reino! 🎂",
+          "selo": "🏆 Prompt Nível Mestre"
+        },
+        "tarefa_ia": {
+          "resposta": "Inteligência Artificial (IA) é um campo da ciência da computação que se concentra na criação de sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana, como...",
+          "selo": "⚠️ Prompt incompleto"
+        },
+        "contexto_fofoca+tarefa_ia": {
+          "resposta": "🗣️ Menina, você tá sabendo dessa tal de IA? Dizem que é um computador super inteligente que fica lendo tudo o que a gente posta e aprendendo a falar igualzinho aos humanos! Passada! Mas faltou alguém pra me dizer quem eu devo ser na hora de contar essa fofoca...",
+          "selo": "🟡 Quase lá"
+        },
+        "contexto_romantico+formato_tuite+papel_pirata+tarefa_ia": {
+          "resposta": "Arrr, meu doce coração de código 💘! A IA é um papagaio cibernético que roubou meu baú de sentimentos virtuais. Navegando nos sete mares da internet em 280 caracteres! #AmorPirataDigital",
+          "selo": "🤖💥 Alucinação!"
+        },
+        "combinacao_padrao": {
+          "resposta": "ERROR 500! Você colocou tantas instruções conflitantes na área de montagem que a IA desenvolveu crise de identidade. Ela acha que é uma torradeira que sabe cantar ópera, mas esqueceu completamente como explicar o que é Inteligência Artificial.\n\nUm prompt ruim estraga o resultado!",
+          "selo": "🤖💥 Alucinação!"
+        }
+      }
+    }
+  }
+}
