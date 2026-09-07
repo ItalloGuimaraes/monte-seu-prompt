@@ -44,7 +44,7 @@ Siga os passos abaixo para rodar o projeto na sua máquina:
 
 1. Clone este repositório:
    ```bash
-   git clone [https://github.com/ItalloGuimaraes/monte-seu-prompt.git](https://github.com/ItalloGuimaraes/monte-seu-prompt.git)
+   git clone https://github.com/ItalloGuimaraes/monte-seu-prompt.git
 
 ```
 
