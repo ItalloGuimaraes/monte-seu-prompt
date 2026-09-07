@@ -1,16 +1,16 @@
 :root {
   /* Cores de Interface */
-  --bg-principal: #F7F7F9;
-  --texto-principal: #2D2D2D;
-  --texto-secundario: #757575;
-  --cta-btn: #FF7A00;
-  --cta-hover: #CC6200;
+  --bg-principal: #F8F9FA;
+  --texto-principal: #202124;
+  --texto-secundario: #5F6368;
+  --cta-btn: #FF6D00; /* Laranja mais vivo */
+  --cta-hover: #E66000;
 
-  /* Cores das Categorias (Borda/Texto e Fundo) */
-  --cor-papel: #2E75B6;      --bg-papel: #D6E4F0;
-  --cor-tarefa: #4C8C4A;     --bg-tarefa: #DCEEDB;
-  --cor-contexto: #BF9000;   --bg-contexto: #FCF1CE;
-  --cor-formato: #C0392B;    --bg-formato: #F8D9D6;
+  /* Cores super brilhantes para as cartas */
+  --cor-papel: #1A73E8;      --bg-papel: #D2E3FC;
+  --cor-tarefa: #0D904F;     --bg-tarefa: #CEEAD6;
+  --cor-contexto: #F9AB00;   --bg-contexto: #FEF7E0;
+  --cor-formato: #EA4335;    --bg-formato: #FAD2CF;
 }
 
 body {

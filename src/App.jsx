@@ -327,6 +327,14 @@ function App() {
             
           </div>
         )}
+
+        {/* RODAPÉ GLOBAL */}
+        <footer className="app-footer">
+          <p><strong>Feira de Graduação UEFS 2026</strong> | Disciplina: EXA085 - Inteligência Artificial Generativa na Educação</p>
+          <p><strong>Desenvolvedores:</strong> Ítallo Guimarães, Levi Vasconcelos, Davi Oliveira, Guilherme Lima e Sinval Victor Mota</p>
+          <p className="ai-declaration">🤖 Aplicação desenvolvida com o auxílio de IA Generativa (Pair Programming) para fins educacionais.</p>
+        </footer>
+
       </div>
     </div>
   );

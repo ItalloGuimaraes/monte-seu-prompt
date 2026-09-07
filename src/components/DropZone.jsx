@@ -9,14 +9,14 @@ export function DropZone({ children }) {
   const style = {
     borderColor: isOver ? 'var(--cta-btn)' : '#DADADC',
     backgroundColor: isOver ? '#FFF7EF' : '#fff',
-    minHeight: '170px',
+    minHeight: '135px',
     border: '3px dashed',
-    borderRadius: '20px',
-    padding: '16px',
+    borderRadius: '16px',
+    padding: '12px',
     display: 'flex',
     flexWrap: 'wrap',
     alignContent: 'flex-start',
-    gap: '14px',
+    gap: '10px',
     transition: 'all 0.2s ease'
   };
 
