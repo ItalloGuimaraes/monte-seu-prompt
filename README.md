@@ -87,6 +87,20 @@ npm run dev
 
 ```
 
+## 📦 Como Gerar a Versão de Produção (Offline)
+
+Para compilar o projeto e gerar os ficheiros estáticos que correm nativamente no navegador, sem necessidade de servidor ou internet:
+
+1. Execute o comando de build:
+```bash
+npm run build
+
+```
+
+2. O Vite criará uma pasta chamada `dist/` na raiz do projeto.
+3. Basta copiar o conteúdo desta pasta para uma *pen drive* ou qualquer computador e dar um duplo clique no ficheiro `index.html`.
+
+
 ## 👥 Equipe de Desenvolvimento
 
 Projeto construído colaborativamente pelos estudantes:
@@ -100,6 +114,3 @@ Projeto construído colaborativamente pelos estudantes:
 * **Guilherme Lima**
 
 * **Sinval Victor Mota**
-
-
-```
