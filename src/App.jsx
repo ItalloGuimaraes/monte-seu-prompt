@@ -30,55 +30,31 @@ function App() {
   const [cartasMontagem, setCartasMontagem] = useState([]);
   const [resultado, setResultado] = useState(null);
 
-  // === Lógica de Jogo (Sortear, Arrastar, Gerar) ===
-// === TELA 2: Lógica de Sortear Missão ===
+  // === TELA 2: Lógica de Sortear Missão (Otimizada com Distratores Automáticos) ===
   const sortearMissao = () => {
-    // 1. Sorteia a missão
     const chavesMissoes = Object.keys(dbData.missoes);
     const chaveSorteada = chavesMissoes[Math.floor(Math.random() * chavesMissoes.length)];
     const missaoEscolhida = dbData.missoes[chaveSorteada];
 
-    // 2. Separa os IDs obrigatórios para as combinações dessa missão
-    const idsNecessarios = new Set();
-    Object.keys(missaoEscolhida.combinacoes).forEach(combo => {
-      if (combo !== 'combinacao_padrao') {
-        combo.split('+').forEach(id => idsNecessarios.add(id));
+    // 1. Pega as cartas base definidas no JSON para esta missão
+    const idsNoBaralho = new Set(missaoEscolhida.cartas_do_baralho);
+
+    // 2. Busca todas as tarefas disponíveis no banco inteiro
+    const todasAsTarefas = Object.keys(dbData.cartas).filter(id => dbData.cartas[id].categoria === 'tarefa');
+
+    // 3. Sorteia tarefas distratoras até termos 3 cartas verdes (Tarefa) no baralho
+    let tarefasNoBaralho = missaoEscolhida.cartas_do_baralho.filter(id => dbData.cartas[id].categoria === 'tarefa').length;
+    
+    while (tarefasNoBaralho < 3) {
+      const tarefaAleatoria = todasAsTarefas[Math.floor(Math.random() * todasAsTarefas.length)];
+      if (!idsNoBaralho.has(tarefaAleatoria)) {
+        idsNoBaralho.add(tarefaAleatoria);
+        tarefasNoBaralho++;
       }
-    });
-
-    // 3. NOVO: Agrupa todas as cartas do banco por categoria
-    const cartasPorCategoria = { papel: [], tarefa: [], contexto: [], formato: [] };
-    Object.entries(dbData.cartas).forEach(([id, dados]) => {
-      cartasPorCategoria[dados.categoria].push(id);
-    });
-
-    // 4. NOVO: Força o baralho a ter pelo menos 3 cartas de CADA categoria
-    ['papel', 'tarefa', 'contexto', 'formato'].forEach(cat => {
-      // Conta quantas cartas dessa cor já foram adicionadas
-      let contagemNaMesa = Array.from(idsNecessarios).filter(id => dbData.cartas[id].categoria === cat).length;
-
-      // Enquanto não tiver 3 cartas dessa cor, puxa mais uma aleatória da mesma cor
-      while (contagemNaMesa < 3) {
-        const candidatas = cartasPorCategoria[cat].filter(id => !idsNecessarios.has(id));
-        if (candidatas.length > 0) {
-          const idSorteado = candidatas[Math.floor(Math.random() * candidatas.length)];
-          idsNecessarios.add(idSorteado);
-          contagemNaMesa++;
-        } else {
-          break; // Segurança: sai do loop se esgotarem as cartas dessa categoria
-        }
-      }
-    });
-
-    // 5. Preenche com aleatórias caso a regra acima não tenha dado 12 cartas no total
-    const todosIdsCartas = Object.keys(dbData.cartas);
-    while (idsNecessarios.size < 12) {
-      const idAleatorio = todosIdsCartas[Math.floor(Math.random() * todosIdsCartas.length)];
-      idsNecessarios.add(idAleatorio);
     }
 
-    // 6. Transforma os IDs nos objetos das cartas e embaralha tudo na tela
-    const baralhoMontado = Array.from(idsNecessarios)
+    // 4. Transforma os IDs nos objetos das cartas e embaralha
+    const baralhoMontado = Array.from(idsNoBaralho)
       .map(id => ({ id, ...dbData.cartas[id] }))
       .sort(() => Math.random() - 0.5);
 
@@ -87,34 +63,93 @@ function App() {
     setCartasMontagem([]); // Limpa a mesa
   };
 
+  // === MOTOR DE RENDERIZAÇÃO: Monta o texto como um quebra-cabeça ===
+  const montarTextoDinamico = (missaoAtual, papel, contexto, formato) => {
+    const ab = papel.estilo.abertura;
+    const ass = papel.estilo.assinatura;
+    const nota = contexto.estilo.nota;
+    const cont = missaoAtual.conteudo;
+
+    let miolo = "";
+    // Se o contexto pedir texto curto, cortamos os passos para o limite de 3
+    const passosFormatados = contexto.estilo.modo === 'curto' ? cont.passos.slice(0, 3) : cont.passos;
+
+    if (formato.id.includes('lista') || formato.id.includes('receita') || formato.id.includes('bula')) {
+      miolo = passosFormatados.map(p => `• ${p}`).join('\n');
+    } else if (formato.id.includes('tuite') || formato.id.includes('tiktok') || contexto.estilo.modo === 'curto') {
+      miolo = `${cont.curto} ${cont.hashtag}`;
+    } else if (formato.id.includes('cordel') || formato.id.includes('musica')) {
+      miolo = cont.verso;
+    } else if (formato.id.includes('meme') || formato.id.includes('standup') || formato.id.includes('codigo')) {
+      miolo = cont.humor;
+    } else {
+      miolo = passosFormatados.join(' '); 
+    }
+
+    // Junta tudo: Abertura + Nota de Contexto + Miolo + Assinatura
+    return `${ab}\n${nota}\n\n${miolo}\n\n${ass}`;
+  };
+
   const handleDragEnd = (event) => {
     const { active, over } = event;
     
-    // Se soltou a carta na DropZone
     if (over && over.id === 'area-de-montagem') {
       const cartaArrastada = cartasBaralho.find(c => c.id === active.id);
-      
       if (cartaArrastada) {
-        // Cria um clone da carta com um ID de instância único
         const cartaClone = { ...cartaArrastada, instanceId: Date.now() + Math.random() };
-        
-        // Adiciona o clone na mesa, mas NÃO remove a original do baralho
         setCartasMontagem([...cartasMontagem, cartaClone]);
       }
     }
   };
 
   const removerDaMontagem = (cartaClicada) => {
-    // Remove apenas a instância exata que foi clicada na mesa
     setCartasMontagem(cartasMontagem.filter(c => c.instanceId !== cartaClicada.instanceId));
   };
 
- // === TELA 4: Lógica de Avaliar o Prompt ===
+  // === TELA 4: Lógica de Avaliar o Prompt ===
   const gerarResposta = () => {
-    // 1. Tenta achar a combinação exata mapeada no JSON
-    const idsArrastados = cartasMontagem.map(c => c.id);
-    const chaveMontada = idsArrastados.sort().join('+');
-    let respostaFinal = missao.combinacoes[chaveMontada];
+    const idsArrastados = cartasMontagem.map(c => c.id).sort();
+    const chaveMontada = idsArrastados.join('+');
+    const totalCartas = cartasMontagem.length;
+    const categorias = cartasMontagem.map(c => c.categoria);
+    const categoriasUnicas = new Set(categorias);
+    const temConflitoCategoria = categoriasUnicas.size !== totalCartas;
+
+    let respostaFinal = null;
+
+    // 1. COMBINAÇÕES CURADAS (Exceções e Easter Eggs)
+    if (missao.combinacoes_curadas && missao.combinacoes_curadas[chaveMontada]) {
+      setResultado(missao.combinacoes_curadas[chaveMontada]);
+      setTelaAtual(4);
+      return;
+    }
+
+    // 2. REGRAS DE FALHA GRAVE
+    if (totalCartas === 0) {
+      setResultado({
+        selo: "⚠️ Prompt incompleto",
+        resposta: "Você clicou em gerar sem colocar nenhuma carta na mesa! A IA ficou apenas piscando o cursor na tela, esperando suas instruções."
+      });
+      setTelaAtual(4);
+      return;
+    }
+
+    const acertouTema = cartasMontagem.some(c => c.id === missao.tarefa);
+
+    if (!acertouTema) {
+      respostaFinal = {
+        selo: "⚠️ Prompt incompleto",
+        resposta: "Você esqueceu de colocar a carta de TAREFA certa! A IA assumiu a persona, preparou o formato, mas ficou te olhando sem saber O QUE era para explicar."
+      };
+    } else if (temConflitoCategoria) {
+      const repetidas = categorias.filter((item, index) => categorias.indexOf(item) !== index);
+      respostaFinal = {
+        selo: "🤖💥 Alucinação!",
+        resposta: `Você colocou duas cartas de ${repetidas[0].toUpperCase()} ao mesmo tempo! A IA tentou fundir as duas instruções e entrou em curto-circuito.`
+      };
+    } else if (totalCartas >= 7) {
+      respostaFinal = missao.combinacoes_curadas['combinacao_padrao'];
+    }
 
     if (respostaFinal) {
       setResultado(respostaFinal);
@@ -122,41 +157,45 @@ function App() {
       return;
     }
 
-    // 2. AVALIAÇÃO DINÂMICA DAS REGRAS
-    const totalCartas = cartasMontagem.length;
-    const categorias = cartasMontagem.map(c => c.categoria);
-    const temConflito = new Set(categorias).size !== categorias.length;
+    // 3. AVALIAÇÃO DE MESTRE VS QUASE LÁ
+    const papelCard = cartasMontagem.find(c => c.categoria === 'papel');
+    const contextoCard = cartasMontagem.find(c => c.categoria === 'contexto');
+    const formatoCard = cartasMontagem.find(c => c.categoria === 'formato');
 
-    // Descobre qual é a carta de Tarefa correta para esta missão lendo o JSON
-    let idTarefaCorreta = null;
-    Object.keys(missao.combinacoes).forEach(chave => {
-      chave.split('+').forEach(id => {
-        if (id.startsWith('tarefa_')) idTarefaCorreta = id;
-      });
-    });
-
-    // Verifica se o aluno colocou a tarefa certa na mesa
-    const acertouTema = cartasMontagem.some(c => c.id === idTarefaCorreta);
-
-    if (totalCartas === 0) {
-      respostaFinal = {
-        selo: "⚠️ Prompt incompleto",
-        resposta: "Você clicou em gerar sem colocar nenhuma carta na mesa! A IA ficou apenas piscando o cursor na tela, esperando suas instruções."
-      };
-    } else if (totalCartas === 1) {
-      respostaFinal = {
-        selo: "⚠️ Prompt incompleto",
-        resposta: `Você colocou apenas uma instrução. A IA até tentou responder, mas o texto gerado foi super genérico porque faltou o tema, contexto, tom de voz ou um formato.`
-      };
-    } else if (temConflito || totalCartas > 5 || !acertouTema) {
-      // ALUCINAÇÃO: Conflito de cores, excesso de cartas, ou ERROU O TEMA!
-      respostaFinal = missao.combinacoes['combinacao_padrao'];
-    } else {
-      // QUASE LÁ: 2 a 4 cartas, sem conflito, e ACERTOU o tema da missão.
+    if (!papelCard || !contextoCard || !formatoCard) {
+      const faltantes = ['papel', 'contexto', 'formato'].filter(cat => !categoriasUnicas.has(cat));
+      
+      // FALLBACK: Se o JSON não tiver a chave, usa uma string genérica para não quebrar o .replace()
+      const textoBase = missao.resposta_quase_generica || "A IA gerou a resposta, mas o resultado ficou genérico. [+ nota automática do que faltou: papel/contexto/formato]";
+      
       respostaFinal = {
         selo: "🟡 Quase lá",
-        resposta: "A sua combinação fez sentido e a IA gerou um texto razoável. Mas como faltaram peças complementares ou você usou cartas que não combinavam 100% com o objetivo, a resposta não atingiu seu potencial máximo!"
+        resposta: textoBase.replace(
+          '[+ nota automática do que faltou: papel/contexto/formato]', 
+          `\n\n💡 Dica: Para extrair o melhor da IA, nunca esqueça de definir a carta de ${faltantes.join(' e ')}.`
+        )
       };
+    } else {
+      const papelAceito = missao.cartas_aceitas.papel.includes(papelCard.id);
+      const contextoAceito = missao.cartas_aceitas.contexto.includes(contextoCard.id);
+      const formatoAceito = missao.cartas_aceitas.formato.includes(formatoCard.id);
+
+      if (papelAceito && contextoAceito && formatoAceito) {
+        respostaFinal = {
+          selo: "🏆 Prompt Nível Mestre",
+          resposta: montarTextoDinamico(missao, papelCard, contextoCard, formatoCard)
+        };
+      } else {
+        let destoou = [];
+        if (!papelAceito) destoou.push('o Papel');
+        if (!contextoAceito) destoou.push('o Contexto');
+        if (!formatoAceito) destoou.push('o Formato');
+
+        respostaFinal = {
+          selo: "🟡 Quase lá",
+          resposta: `A IA gerou a resposta, mas o resultado ficou um pouco esquisito.\n\n💡 Dica: ${destoou.join(' e ')} que você escolheu não combina muito bem com esta missão específica. Tente trocar essa carta!`
+        };
+      }
     }
 
     setResultado(respostaFinal);
@@ -280,7 +319,7 @@ function App() {
                 )}
                 {cartasMontagem.map(carta => (
                 <Card 
-                  key={carta.instanceId} // Usando o ID único da cópia
+                  key={carta.instanceId} 
                   {...carta} 
                   isMini={true} 
                   onRemove={() => removerDaMontagem(carta)} 
@@ -312,7 +351,10 @@ function App() {
             </div>
             
             <div className="balao-ia">
-              {resultado.resposta}
+              {/* Utilizando whiteSpace pre-wrap para renderizar as quebras de linha dinâmicas \n */}
+              <div style={{ whiteSpace: 'pre-wrap' }}>
+                {resultado.resposta}
+              </div>
             </div>
             
             <p className="subtitulo" style={{ marginTop: '10px', color: '#2D2D2D', fontWeight: 'bold' }}>

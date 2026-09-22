@@ -8,6 +8,18 @@ Este projeto foi desenvolvido sob o escopo da disciplina **EXA085 - Inteligênci
 
 A aplicação foi criada para atuar como uma ferramenta de conscientização e educação durante a Feira de Graduação da UEFS 2026, recebendo estudantes do ensino médio e a comunidade externa. O objetivo pedagógico é desmistificar o funcionamento das IAs generativas (como o ChatGPT, Gemini, etc.), ensinando na prática que **a máquina não tem vontade própria; a qualidade da sua resposta depende inteiramente da qualidade da instrução humana (o *prompt*).**
 
+## 📜 Articulação com as Diretrizes do MEC
+
+O projeto foi fundamentado no Capítulo 2 das diretrizes do Ministério da Educação para o uso de IA, explorando ativamente os seguintes pontos:
+
+*   **Oportunidade 6 - Apoio da inteligência artificial à inovação pedagógica e ao desenvolvimento de novas competências:** A dinâmica transforma o participante em criador ativo do resultado, e não num mero espetador. Ao manipular fisicamente os componentes de um comando, o estudante desenvolve uma competência prática (Engenharia de Prompts) transferível para qualquer contexto de uso de IA.
+*   **Desafio 5 - Confiabilidade das respostas e prevenção de erros factuais em modelos de inteligência artificial generativa:** A mecânica do jogo demonstra de forma concreta que comandos incompletos ou contraditórios geram propositadamente respostas "alucinadas" e vagas. Isto torna visível um conceito abstrato, educando o utilizador sobre as limitações da IA.
+*   **Desafio 6 - Proteção da aprendizagem ativa e da autoria acadêmica frente à automação excessiva:** A ausência de *slots* fixos na área de montagem força o participante a pensar criticamente sobre o que o objetivo exige. O jogo reforça que não existe uma "fórmula automática" e que a autoria do resultado pertence ao ser humano.
+
+## ⚖️ Curadoria e Ética (Próximos Passos)
+
+Como parte do rigor académico e das exigências da disciplina, o produto educacional passará pela avaliação utilizando o **instrumento de curadoria da turma de ética**. Esta etapa de validação encontra-se pendente e será executada antes do evento final para garantir que a aplicação respeita integralmente os princípios éticos do uso de tecnologia no ambiente escolar.
+
 ## 🎮 Como Funciona o Jogo?
 
 O usuário assume a cadeira de um "Engenheiro de Prompt". Ao receber uma missão (ex: Explicar a Fotossíntese), ele deve construir o pedido perfeito utilizando uma mecânica de *Drag and Drop* (arrastar e soltar) com cartas divididas em 4 categorias essenciais:
@@ -49,33 +61,45 @@ git clone https://github.com/ItalloGuimaraes/monte-seu-prompt.git
 ```
 
 2. Acesse a pasta do projeto:
+
+
+
 ```bash
 cd monte-seu-prompt
 
 ```
 
-
 3. Instale as dependências:
+
+
+
 ```bash
 npm install
 
 ```
 
-
 4. Inicie o servidor de desenvolvimento:
+
+
+
 ```bash
 npm run dev
 
 ```
 
-
-
 ## 👥 Equipe de Desenvolvimento
 
 Projeto construído colaborativamente pelos estudantes:
 
-* **Davi Oliveira**
-* **Guilherme Lima**
 * **Ítallo Guimarães**
+
 * **Levi Vasconcelos**
+
+* **Davi Oliveira**
+
+* **Guilherme Lima**
+
 * **Sinval Victor Mota**
+
+
+```

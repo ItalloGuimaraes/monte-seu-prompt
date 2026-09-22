@@ -1,85 +1,141 @@
 {
   "_leia_me": [
-    "Este arquivo documenta o banco de dados EXATO usado pelo app 'Monte seu Prompt'.",
-    "Estrutura: 'cartas' = baralho completo (43 cartas). 'missoes' = 10 missões.",
-    "Em cada missão, 'combinacoes' lista as respostas CURADAS À MÃO, indexadas pela combinação exata de IDs de carta (ordem alfabética, unidos por '+', sem repetição).",
-    "'combinacao_padrao' é a resposta-curinga daquela missão para quando o participante monta um prompt com 6+ cartas diferentes sem repetir categoria (prompt 'sobrecarregado').",
-    "IMPORTANTE: o app NÃO depende só desta tabela. Qualquer combinação que não apareça aqui (a imensa maioria das combinações possíveis) é resolvida por um motor de regras dentro do código, que decide o selo assim:",
-    "  1) 2+ cartas DIFERENTES na mesma categoria (ex.: dois Papéis) => 🤖💥 Alucinação! (o app gera o texto na hora, citando as duas cartas escolhidas).",
-    "  2) 6 ou mais cartas diferentes sem esse tipo de conflito => usa o texto de 'combinacao_padrao' da missão.",
-    "  3) Caso contrário, conta quantas categorias batem exatamente com a combinação correta da missão: 0-1 categoria => ⚠️ Prompt incompleto (usa a resposta da tarefa sozinha); 2-3 categorias => 🟡 Quase lá (usa 'resposta_quase_generica' + um aviso automático do que faltou); 4 categorias => 🏆 Prompt Nível Mestre.",
-    "Ou seja: esta tabela cobre os casos mais prováveis/engraçados; o motor de regras garante que absolutamente QUALQUER combinação tenha uma resposta."
+    "Banco de dados do app 'Monte seu Prompt' (versão com respostas montadas dinamicamente).",
+    "MUDANÇA PRINCIPAL: não existe mais UMA única combinação perfeita por missão. Cada missão lista, em 'cartas_aceitas', TODAS as cartas de Papel, Contexto e Formato que combinam com ela. Qualquer Papel aceito + qualquer Contexto aceito + qualquer Formato aceito + a Tarefa da missão => 🏆 Prompt Nível Mestre.",
+    "Ver 'total_combinacoes_nivel_mestre' em cada missão: somando todas, são centenas de caminhos diferentes para o resultado campeão.",
+    "COMO A RESPOSTA É MONTADA: o campo 'conteudo' guarda o miolo da explicação (passos, verso rimado, versão curta e versão humorística). A carta de PAPEL define a abertura e a assinatura (campo 'estilo' de cada carta de papel). A carta de CONTEXTO define a nota de tom e se a resposta é curta ou completa. A carta de FORMATO define a estrutura final (lista, música, cordel, tuíte, meme, stand-up, receita, bula, código). O app junta as três coisas na hora.",
+    "'cartas_incoerentes' são as cartas que aparecem no baralho mas NÃO combinam com a missão. Se o participante usar uma delas, a resposta ainda é montada, mas o selo cai para 🟡 Quase lá, com um aviso de qual carta destoou.",
+    "'combinacoes_curadas' são respostas escritas à mão que SOBRESCREVEM o motor, para combinações específicas (piadas prontas, alucinações memoráveis e a resposta vaga de quando só a Tarefa é usada).",
+    "'combinacao_padrao' é usada quando o participante monta um prompt sobrecarregado (7 ou mais cartas diferentes sem repetir categoria).",
+    "REGRAS DO MOTOR, na ordem: 1) combinação curada bate exatamente => usa ela. 2) duas cartas DIFERENTES na mesma categoria => 🤖💥 Alucinação (texto gerado na hora citando as duas cartas). 3) 7+ cartas diferentes => 'combinacao_padrao'. 4) Tarefa errada ou ausente => ⚠️ Prompt incompleto. 5) Papel + Contexto + Formato preenchidos e todos aceitos => 🏆 Nível Mestre. 6) Qualquer outro caso (faltou categoria ou entrou carta incoerente) => 🟡 Quase lá, com aviso do que faltou ou do que destoou.",
+    "CORREÇÃO: 'resposta_quase_generica' é OBRIGATÓRIA em cada missão — o App.jsx chama .replace() nela quando o jogador acerta a Tarefa mas esquece Papel, Contexto ou Formato. Sem esse campo a aplicação quebra (tela branca). O texto deve terminar com o marcador '[+ nota automática do que faltou: papel/contexto/formato]', que o App substitui pela dica."
   ],
   "cartas": {
     "papel_prof_fisica": {
       "titulo": "Professor de física animado",
       "icone": "🧑‍🏫",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🧑‍🏫 Presta atenção, turma, que essa é rapidinha:",
+        "assinatura": "Anotou? Então já pode fechar o caderno!"
+      }
     },
     "papel_prof_bio": {
       "titulo": "Professora de Biologia animada",
       "icone": "🔬",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🔬 Bora lá, pessoal! Olha que coisa linda da natureza:",
+        "assinatura": "Viu só? Biologia é pura engenharia."
+      }
     },
     "papel_pirata": {
       "titulo": "Um pirata ranzinza",
       "icone": "🏴‍☠️",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🏴‍☠️ Arrr, grumete preguiçoso! Escuta essa aqui, e rápido:",
+        "assinatura": "Agora sai da minha frente antes que eu mude de ideia!"
+      }
     },
     "papel_alienigena": {
       "titulo": "Alienígena confuso",
       "icone": "👽",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "👽 Bip bop. Saudações, criatura do planeta Terra. Registrando explicação:",
+        "assinatura": "Fim da transmissão intergaláctica. Bip."
+      }
     },
     "papel_coach": {
       "titulo": "Coach quântico",
       "icone": "🚀",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🚀 ATENÇÃO, CAMPEÃO! Anota isso aí na agenda de alta performance:",
+        "assinatura": "Agora vai lá e aplica! Sem desculpas! 🚀"
+      }
     },
     "papel_vilao": {
       "titulo": "Vilão de novela das 8",
       "icone": "🦹‍♂️",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🦹‍♂️ MUHAHAHA! Tolos mortais, escutem o meu plano... quer dizer, a explicação:",
+        "assinatura": "E é assim que se domina o conhecimento! MUHAHAHA!"
+      }
     },
     "papel_narrador": {
       "titulo": "Narrador esportivo",
       "icone": "⚽",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "⚽ OLHA O QUE VEM AÍ, TORCIDA! ATENÇÃO NESSA JOGADA:",
+        "assinatura": "É ISSO AÍ! HAJA CORAÇÃO!"
+      }
     },
     "papel_vovo": {
       "titulo": "Uma avó coruja",
       "icone": "👵",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "👵 Vem cá, meu bem, senta aqui que a vó vai te contar:",
+        "assinatura": "Agora come um biscoitinho, meu anjo."
+      }
     },
     "papel_rapper": {
       "titulo": "Rapper famoso",
       "icone": "🎤",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🎤 Yo, yo! Presta atenção no som que eu vou soltar:",
+        "assinatura": "É nóis! Paz, rima e conhecimento! 🎤"
+      }
     },
     "papel_chef": {
       "titulo": "Um chef de cozinha",
       "icone": "👨‍🍳",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "👨‍🍳 Bem-vindos à minha cozinha! Hoje o prato principal é conhecimento:",
+        "assinatura": "Bon appétit! Beijo do chef."
+      }
     },
     "papel_reporter": {
       "titulo": "Repórter ao vivo",
       "icone": "📰",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "📰 AO VIVO, direto do local dos fatos, com exclusividade:",
+        "assinatura": "De volta para vocês, no estúdio!"
+      }
     },
     "papel_detetive": {
       "titulo": "Detetive particular",
       "icone": "🕵️",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🕵️ Caso encerrado. Deixa eu te mostrar as pistas na ordem:",
+        "assinatura": "Elementar. Caso arquivado."
+      }
     },
     "papel_gota_agua": {
       "titulo": "Uma gota de água super viajada",
       "icone": "💧",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "💧 Oi! Sou uma gota d'água e já rodei o mundo inteiro. Escuta minha história:",
+        "assinatura": "Até a próxima chuva! 💧"
+      }
     },
     "papel_cientista": {
       "titulo": "Cientista maluco de laboratório",
       "icone": "🧪",
-      "categoria": "papel"
+      "categoria": "papel",
+      "estilo": {
+        "abertura": "🧪 MUAHAHA! Ao laboratório! Olha o que eu acabei de descobrir:",
+        "assinatura": "Agora me passa o tubo de ensaio, rápido!"
+      }
     },
     "tarefa_gravidade": {
       "titulo": "Explique a Lei da Gravidade",
@@ -134,309 +190,617 @@
     "contexto_odeia": {
       "titulo": "Para quem odeia ciências",
       "icone": "😒",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Prometo: sem fórmula chata e sem enrolação.)",
+        "modo": "normal"
+      }
     },
     "contexto_crianca": {
       "titulo": "Para uma criança de 5 anos",
       "icone": "🧒",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Vou falar bem fácil, do jeitinho que criança de 5 anos entende.)",
+        "modo": "simples"
+      }
     },
     "contexto_fofoca": {
       "titulo": "Em tom de fofoca de bairro",
       "icone": "🗣️",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Chega mais, porque essa história é boa, viu...)",
+        "modo": "normal"
+      }
     },
     "contexto_gamer": {
       "titulo": "Usando gírias de gamer",
       "icone": "🎮",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Modo tutorial ativado, player. Bora upar esse conhecimento.)",
+        "modo": "normal"
+      }
     },
     "contexto_medieval": {
       "titulo": "Como se estivesse na Idade Média",
       "icone": "🏰",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Ouçam bem, súditos do reino!)",
+        "modo": "normal"
+      }
     },
     "contexto_urgente": {
       "titulo": "Como se o mundo fosse acabar",
       "icone": "🚨",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(RÁPIDO, que o tempo está acabando!)",
+        "modo": "curto"
+      }
     },
     "contexto_romantico": {
       "titulo": "Em um clima de romance",
       "icone": "💘",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Com todo o carinho do mundo, meu bem...)",
+        "modo": "normal"
+      }
     },
     "contexto_prova": {
       "titulo": "Para quem tem prova amanhã",
       "icone": "📝",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Foco total: isso aqui cai na prova de amanhã.)",
+        "modo": "normal"
+      }
     },
     "contexto_3frases": {
       "titulo": "Em apenas 3 frases",
       "icone": "✏️",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Vou ser bem breve, prometo.)",
+        "modo": "curto"
+      }
     },
     "contexto_tiktok": {
       "titulo": "Como se fosse viralizar no TikTok",
       "icone": "📱",
-      "categoria": "contexto"
+      "categoria": "contexto",
+      "estilo": {
+        "nota": "(Segura essa, porque esse aqui viraliza!)",
+        "modo": "curto"
+      }
     },
     "formato_tuite": {
       "titulo": "Como um tuíte",
       "icone": "🐦",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_tuite)"
+      }
     },
     "formato_lista": {
       "titulo": "Em lista com emojis",
       "icone": "📋",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_lista)"
+      }
     },
     "formato_cordel": {
       "titulo": "Em forma de poema de cordel",
       "icone": "🪗",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_cordel)"
+      }
     },
     "formato_receita": {
       "titulo": "Como uma receita de bolo",
       "icone": "🎂",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_receita)"
+      }
     },
     "formato_standup": {
       "titulo": "Como um roteiro de stand-up",
       "icone": "🎭",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_standup)"
+      }
     },
     "formato_codigo": {
       "titulo": "Explicado em código de programação",
       "icone": "💻",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_codigo)"
+      }
     },
     "formato_musica": {
       "titulo": "Como uma música",
       "icone": "🎵",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_musica)"
+      }
     },
     "formato_meme": {
       "titulo": "Como a legenda de um meme",
       "icone": "🖼️",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_meme)"
+      }
     },
     "formato_bula": {
       "titulo": "Como uma bula de remédio",
       "icone": "💊",
-      "categoria": "formato"
+      "categoria": "formato",
+      "estilo": {
+        "render": "gerado pelo motor (FORMATO_RENDER.formato_bula)"
+      }
     }
   },
   "missoes": {
     "missao_fotossintese": {
       "objetivo": "Faça a IA explicar a fotossíntese",
-      "cartas_do_baralho": [
-        "papel_prof_bio",
-        "tarefa_fotossintese",
-        "contexto_crianca",
-        "formato_lista",
+      "tarefa": "tarefa_fotossintese",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_prof_bio",
+          "papel_vovo",
+          "papel_rapper",
+          "papel_chef"
+        ],
+        "contexto": [
+          "contexto_crianca",
+          "contexto_odeia",
+          "contexto_tiktok",
+          "contexto_3frases"
+        ],
+        "formato": [
+          "formato_lista",
+          "formato_cordel",
+          "formato_musica",
+          "formato_receita"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_coach",
-        "formato_cordel",
-        "papel_rapper",
         "formato_codigo"
       ],
-      "combinacoes": {
-        "contexto_crianca+formato_lista+papel_prof_bio+tarefa_fotossintese": {
-          "resposta": "🌱 Vem cá, meu netinho amado, ouça a vó lhe contar 👵\nComo a plantinha no pasto faz seu almoço chegar\nEla puxa a luz do sol, bebe a água lá do chão\nE mistura com o ar, fazendo a refeição!\nSolta um ar limpinho pra gente respirar 🌬️\nÉ a mágica da natureza fazendo a folha brotar! ✨",
-          "selo": "🏆 Prompt Nível Mestre"
-        },
-        "tarefa_fotossintese": {
-          "resposta": "A fotossíntese é um processo físico-químico, a nível celular, realizado pelos seres vivos clorofilados, que utilizam dióxido de carbono e água para produzir energia.",
-          "selo": "⚠️ Prompt incompleto"
-        },
+      "cartas_do_baralho": [
+        "tarefa_fotossintese",
+        "papel_prof_bio",
+        "papel_vovo",
+        "papel_rapper",
+        "papel_chef",
+        "contexto_crianca",
+        "contexto_odeia",
+        "contexto_tiktok",
+        "contexto_3frases",
+        "formato_lista",
+        "formato_cordel",
+        "formato_musica",
+        "formato_receita",
+        "papel_coach",
+        "formato_codigo"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "A planta captura a luz do sol pelas folhas ☀️",
+          "As raízes puxam água lá do solo 💧",
+          "As folhas absorvem gás carbônico do ar 🌬️",
+          "Com a clorofila, ela junta tudo isso e fabrica o próprio açúcar 🍬",
+          "E ainda solta oxigênio pra gente respirar 🍃"
+        ],
+        "verso": "A plantinha bebe água e toma sol o dia inteiro,\nCom o ar que a gente solta ela faz seu doce caseiro,\nDevolve oxigênio puro: esse é o trato verdadeiro!",
+        "curto": "Planta é painel solar vivo: luz + água + gás carbônico viram comida, e o oxigênio sai de brinde. 🌱",
+        "humor": "Sabe quem trabalha de graça desde sempre? A planta. Ela pega sol, bebe água, respira o ar que a gente polui e ainda devolve oxigênio limpo. Se fosse gente, já tinha pedido demissão faz tempo.",
+        "hashtag": "#fotossíntese"
+      },
+      "combinacoes_curadas": {
         "formato_lista+papel_coach+tarefa_fotossintese": {
-          "resposta": "🚀 SEJA COMO UMA PLANTA!\n1. Acorde cedo e puxe a energia do Sol!\n2. Hidrate-se! Suas raízes precisam de água!\n3. Transforme os problemas (CO2) em resultados (Glicose)!\nFaltou você me dizer PRA QUEM eu estou falando isso. Criança? Adulto?",
+          "resposta": "🚀 SEJA COMO UMA PLANTA!\n1. Acorde cedo e puxe a energia do Sol!\n2. Hidrate-se! Suas raízes precisam de água!\n3. Transforme os problemas (CO2) em resultados (Glicose)!\nFicou motivacional, mas de ciência mesmo sobrou pouco — e você ainda não disse PRA QUEM eu estou falando isso.",
           "selo": "🟡 Quase lá"
         },
         "formato_codigo+papel_rapper+tarefa_fotossintese": {
           "resposta": "Yo yo! 🎤 check check... import Luz;\nSe (Agua && CO2) { print('Açúcar mano!'); }\nMas aí a rima não bate com o código e a planta explode num erro 404 de rimas. SYNTAX ERROR na folha verde!",
           "selo": "🤖💥 Alucinação!"
         },
+        "tarefa_fotossintese": {
+          "resposta": "A fotossíntese é um processo físico-químico, a nível celular, realizado pelos seres vivos clorofilados, que utilizam dióxido de carbono e água para produzir energia.",
+          "selo": "⚠️ Prompt incompleto"
+        },
         "combinacao_padrao": {
           "resposta": "Você jogou as cartas de qualquer jeito e a IA bugou! Ela respondeu que a fotossíntese é quando gnomos pintam as folhas de verde usando tinta a óleo e raios laser.\n\nExcesso de instrução ou cartas soltas sem coerência criam alucinações absurdas!",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "A fotossíntese é o processo pelo qual as plantas usam a luz do sol, a água e o gás carbônico para produzir seu próprio alimento (glicose) e liberar oxigênio no ar. Isso acontece principalmente nas folhas, graças a uma substância chamada clorofila. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "A fotossíntese é o processo pelo qual as plantas usam a luz do sol, a água e o gás carbônico para produzir seu próprio alimento (a glicose) e liberar oxigênio no ar. Isso acontece principalmente nas folhas, graças a uma substância chamada clorofila. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_gravidade": {
       "objetivo": "Faça a IA explicar a Lei da Gravidade",
-      "cartas_do_baralho": [
-        "papel_prof_fisica",
-        "tarefa_gravidade",
-        "contexto_odeia",
-        "formato_tuite",
+      "tarefa": "tarefa_gravidade",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_prof_fisica",
+          "papel_narrador",
+          "papel_pirata",
+          "papel_cientista"
+        ],
+        "contexto": [
+          "contexto_odeia",
+          "contexto_gamer",
+          "contexto_prova",
+          "contexto_urgente"
+        ],
+        "formato": [
+          "formato_tuite",
+          "formato_lista",
+          "formato_standup",
+          "formato_meme"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_coach",
-        "contexto_fofoca",
-        "papel_pirata"
+        "contexto_romantico",
+        "contexto_fofoca"
       ],
-      "combinacoes": {
-        "contexto_odeia+formato_tuite+papel_prof_fisica+tarefa_gravidade": {
-          "resposta": "🧑‍🏫 Presta atenção que essa é rápida: TUDO que tem massa puxa tudo que tem massa! É por isso que você não sai voando feito um balão. Newton sacou isso vendo uma maçã cair. Gravidade explicada, sem enrolação! ⬇️ #ciência",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_gravidade",
+        "papel_prof_fisica",
+        "papel_narrador",
+        "papel_pirata",
+        "papel_cientista",
+        "contexto_odeia",
+        "contexto_gamer",
+        "contexto_prova",
+        "contexto_urgente",
+        "formato_tuite",
+        "formato_lista",
+        "formato_standup",
+        "formato_meme",
+        "papel_coach",
+        "contexto_romantico",
+        "contexto_fofoca"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Tudo que tem massa atrai tudo que tem massa 🍎",
+          "Quanto maior a massa, mais forte é esse puxão",
+          "Quanto mais perto os corpos estão, mais forte também",
+          "A Terra é gigante, então ela ganha e puxa você pro chão 🌍",
+          "Foi exatamente isso que Newton sacou vendo uma maçã cair"
+        ],
+        "verso": "Newton viu a maçã caindo e entendeu num piscar,\nTudo que tem massa puxa, ninguém pode escapar,\nA Terra puxa a gente, por isso dá pra andar!",
+        "curto": "Tudo que tem massa puxa tudo que tem massa — e a Terra, sendo gigante, ganha essa queda de braço. 🍎",
+        "humor": "A gravidade é a única coisa no universo que nunca tira folga. Você até consegue ignorar as mensagens de todo mundo, mas tenta ignorar a Terra te puxando pra ver o que acontece.",
+        "hashtag": "#gravidade"
+      },
+      "combinacoes_curadas": {
+        "contexto_fofoca+papel_coach+papel_prof_fisica+tarefa_gravidade": {
+          "resposta": "Menina, você não sabe da maior! A gravidade tá puxando todo mundo pra baixo! 🗣️ Mas mude seu mindset! Acelere seus prótons quânticos igual a maçã de Newton! 🚀 A força = massa vezes aceleração, entendeu gata?!",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_gravidade": {
           "resposta": "A gravidade é uma força atrativa que surge entre todos os corpos com massa. Isaac Newton formulou a lei da gravitação universal, que descreve essa força matematicamente.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_odeia+papel_prof_fisica+tarefa_gravidade": {
-          "resposta": "Olha, eu sei que você não curte física, mas pense na gravidade como um abraço invisível da Terra! Ela puxa tudo para o centro. (Mas o texto ficou longo e sem formatação porque faltou definir o Formato).",
-          "selo": "🟡 Quase lá"
-        },
-        "contexto_fofoca+papel_coach+papel_prof_fisica+tarefa_gravidade": {
-          "resposta": "Menina, você não sabe da maior! A gravidade tá puxando todo mundo pra baixo! 🗣️ Mas mude seu mindset! Acelere seus prótons quânticos igual a maçã de Newton! 🚀 A força = massa vezes aceleração, entendeu gata?!",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA tentou misturar todas essas cartas de uma vez e entrou em curto-circuito! Acabou gerando uma teoria bizarra de que a gravidade é causada por maçãs gigantes invisíveis empurrando as pessoas para baixo.\n\nColocar cartas repetidas, conflitantes ou em excesso confunde a máquina!",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "A Lei da Gravidade, descrita por Isaac Newton, diz que todo objeto com massa atrai outros objetos — quanto maior a massa e mais perto os corpos estão, mais forte é essa atração. É por isso que as coisas caem em direção à Terra. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "A Lei da Gravidade, descrita por Isaac Newton, diz que todo objeto com massa atrai outros objetos: quanto maior a massa e mais perto os corpos estão, mais forte é essa atração. É por isso que as coisas caem em direção à Terra. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_buraco_negro": {
       "objetivo": "Faça a IA explicar o que é um buraco negro",
-      "cartas_do_baralho": [
-        "papel_alienigena",
-        "tarefa_buraco_negro",
-        "contexto_gamer",
-        "formato_lista",
-        "papel_vilao",
-        "formato_receita",
+      "tarefa": "tarefa_buraco_negro",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_alienigena",
+          "papel_cientista",
+          "papel_vilao",
+          "papel_narrador"
+        ],
+        "contexto": [
+          "contexto_gamer",
+          "contexto_crianca",
+          "contexto_urgente",
+          "contexto_tiktok"
+        ],
+        "formato": [
+          "formato_lista",
+          "formato_meme",
+          "formato_musica",
+          "formato_tuite"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_pirata",
-        "formato_tuite",
-        "contexto_crianca"
+        "formato_receita"
       ],
-      "combinacoes": {
-        "contexto_gamer+formato_lista+papel_alienigena+tarefa_buraco_negro": {
-          "resposta": "👽 Saudações, players da Terra! Cuidado com os buracos negros, eles são o boss final do universo:\n👾 1. É tipo uma zona de 'hit kill' no espaço, onde a gravidade é tão alta que nem a luz escapa!\n🛸 2. Se você cruzar o 'Horizonte de Eventos', é Game Over na certa.\n🌌 3. Eles dão spawn quando estrelas supermassivas colapsam.",
-          "selo": "🏆 Prompt Nível Mestre"
-        },
-        "tarefa_buraco_negro": {
-          "resposta": "Um buraco negro é uma região do espaço-tempo onde a gravidade é tão forte que nada, nem mesmo partículas ou radiação eletromagnética, pode escapar dela.",
-          "selo": "⚠️ Prompt incompleto"
-        },
+      "cartas_do_baralho": [
+        "tarefa_buraco_negro",
+        "papel_alienigena",
+        "papel_cientista",
+        "papel_vilao",
+        "papel_narrador",
+        "contexto_gamer",
+        "contexto_crianca",
+        "contexto_urgente",
+        "contexto_tiktok",
+        "formato_lista",
+        "formato_meme",
+        "formato_musica",
+        "formato_tuite",
+        "papel_pirata",
+        "formato_receita"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Uma estrela gigante fica sem combustível e colapsa 🌟",
+          "Toda aquela massa se espreme num espaço minúsculo",
+          "A gravidade ali fica absurdamente forte 🌌",
+          "Nem a luz consegue escapar — por isso ele é 'negro'",
+          "A fronteira sem volta tem nome: horizonte de eventos ⚠️"
+        ],
+        "verso": "Era uma estrela enorme que um dia se apagou,\nEspremeu-se num ponto e a gravidade estourou,\nNem a luz mais escapa de quem ali entrou!",
+        "curto": "Estrela gigante colapsa, vira um ponto com gravidade absurda — e nem a luz consegue escapar. 🌌",
+        "humor": "Buraco negro é o único lugar do universo onde 'só vou entrar rapidinho' é literalmente impossível. Passou do horizonte de eventos, acabou a conversa.",
+        "hashtag": "#buracoNegro"
+      },
+      "combinacoes_curadas": {
         "formato_receita+papel_vilao+tarefa_buraco_negro": {
-          "resposta": "MUHAHAHA! Querem destruir a luz? 🎂 Pegue uma estrela gigante, espere ela ficar sem combustível e colapsar o núcleo até virar uma singularidade! Misture com muita gravidade e pronto! Uma escuridão eterna! (Boa ideia, mas faltou dizer PRA QUEM é essa explicação).",
+          "resposta": "MUHAHAHA! Querem destruir a luz? 🎂 Pegue uma estrela gigante, espere ela ficar sem combustível e colapsar o núcleo até virar uma singularidade! Misture com muita gravidade e pronto! Uma escuridão eterna! (Divertido, mas receita de bolo não era bem o formato ideal pra astrofísica — e faltou dizer pra quem é.)",
           "selo": "🟡 Quase lá"
         },
         "contexto_crianca+formato_tuite+papel_alienigena+papel_pirata+tarefa_buraco_negro": {
           "resposta": "Arrr, marujos do espaço! 🏴‍☠️ O buraco negro é um redemoinho gigante! Mas pera, eu venho de Marte 👽 bip bop... é um monstro que come criancinhas e estrelas? Yarrr, o tesouro está no horizonte de eventos! #EspaçoPirataAlienígena",
           "selo": "🤖💥 Alucinação!"
         },
+        "tarefa_buraco_negro": {
+          "resposta": "Um buraco negro é uma região do espaço-tempo onde a gravidade é tão forte que nada, nem mesmo partículas ou radiação eletromagnética, pode escapar dela.",
+          "selo": "⚠️ Prompt incompleto"
+        },
         "combinacao_padrao": {
           "resposta": "A IA ficou completamente confusa com esse monte de cartas na mesa. Ela ignorou a física e começou a contar uma história sobre aspiradores de pó galácticos que sugam planetas para limpar o universo.\n\nQuando você pede muitas coisas sem coerência, a IA inventa mentiras!",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "Um buraco negro se forma quando uma estrela muito massiva colapsa sob seu próprio peso. A gravidade fica tão intensa numa região pequena que nem a luz consegue escapar — por isso ele é 'invisível' e só percebemos seus efeitos ao redor. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "Um buraco negro se forma quando uma estrela muito massiva colapsa sob o próprio peso. A gravidade fica tão intensa numa região pequena que nem a luz consegue escapar, e a fronteira sem volta se chama horizonte de eventos. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_pitagoras": {
       "objetivo": "Faça a IA explicar o Teorema de Pitágoras",
-      "cartas_do_baralho": [
-        "papel_narrador",
-        "tarefa_pitagoras",
-        "contexto_urgente",
-        "formato_standup",
-        "papel_prof_fisica",
-        "contexto_gamer",
+      "tarefa": "tarefa_pitagoras",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_narrador",
+          "papel_prof_fisica",
+          "papel_detetive",
+          "papel_rapper"
+        ],
+        "contexto": [
+          "contexto_urgente",
+          "contexto_gamer",
+          "contexto_prova",
+          "contexto_3frases"
+        ],
+        "formato": [
+          "formato_standup",
+          "formato_lista",
+          "formato_musica",
+          "formato_codigo"
+        ]
+      },
+      "cartas_incoerentes": [
+        "papel_pirata",
         "contexto_romantico",
-        "formato_receita",
-        "papel_pirata"
+        "formato_receita"
       ],
-      "combinacoes": {
-        "contexto_urgente+formato_standup+papel_narrador+tarefa_pitagoras": {
-          "resposta": "🚨 (Pega o microfone correndo) 🚨 OLHA O GOL! Quer dizer, OLHA O TRIÂNGULO RETÂNGULO! Gente, o mundo tá acabando em 5 minutos e vocês precisam saber disso! 🎭 Imagina que a hipotenusa é o atacante grandão: o quadrado dele é IGUAL à soma dos quadrados dos catetos que tão na zaga! Pensa rápido: a² = b² + c²! Corre e anota isso antes do meteoro bater! Haja coração!!! ⚽",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_pitagoras",
+        "papel_narrador",
+        "papel_prof_fisica",
+        "papel_detetive",
+        "papel_rapper",
+        "contexto_urgente",
+        "contexto_gamer",
+        "contexto_prova",
+        "contexto_3frases",
+        "formato_standup",
+        "formato_lista",
+        "formato_musica",
+        "formato_codigo",
+        "papel_pirata",
+        "contexto_romantico",
+        "formato_receita"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Pegue um triângulo retângulo, aquele que tem um ângulo de 90° 📐",
+          "O lado maior, na frente do ângulo reto, é a hipotenusa",
+          "Os outros dois lados são os catetos",
+          "A regra: hipotenusa² = cateto² + cateto²",
+          "Ou seja: a² = b² + c². Sabendo dois lados, você acha o terceiro ✅"
+        ],
+        "verso": "No triângulo retângulo tem segredo pra contar,\nOs catetos ao quadrado se juntam pra somar,\nDá o quadrado da hipotenusa: é só calcular!",
+        "curto": "Triângulo retângulo: a² = b² + c². Sabendo dois lados, o terceiro cai no colo. 📐",
+        "humor": "Pitágoras descobriu uma fórmula há 2500 anos e até hoje ela persegue estudante em véspera de prova. Isso sim é legado: o cara virou pesadelo eterno com três letrinhas.",
+        "hashtag": "#pitágoras"
+      },
+      "combinacoes_curadas": {
+        "contexto_romantico+formato_receita+papel_pirata+tarefa_pitagoras": {
+          "resposta": "Yarrr! 🏴‍☠️ Pegue 2 xícaras de catetos apaixonados 💘, jogue na panela do navio, misture com o quadrado do amor perfeito e asse no forno até virar uma hipotenusa crocante com perna de pau! (A receita não faz nenhum sentido matemático.)",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_pitagoras": {
           "resposta": "Em qualquer triângulo retângulo, o quadrado do comprimento da hipotenusa é igual à soma dos quadrados dos comprimentos dos catetos.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_gamer+papel_prof_fisica+tarefa_pitagoras": {
-          "resposta": "🎮 Salve turma! Pega a visão geométrica aqui: no triângulo retângulo, a hipotenusa é o boss final, e os catetos são os minions. O XP do boss ao quadrado é igual a soma do XP dos minions ao quadrado! (Mas o texto ficou num parágrafo contínuo e meio chato, faltou a carta de Formato).",
-          "selo": "🟡 Quase lá"
-        },
-        "contexto_romantico+formato_receita+papel_pirata+tarefa_pitagoras": {
-          "resposta": "Yarrr! 🏴‍☠️ Pegue 2 xícaras de catetos apaixonados 💘, jogue na panela do navio, misture com o quadrado do amor perfeito e asse no forno até virar uma hipotenusa crocante com perna de pau! (A receita não faz nenhum sentido matemático).",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA se perdeu no meio desse excesso de cartas repetidas ou confusas. O resultado foi um delírio total dizendo que Pitágoras era, na verdade, um software de edição de triângulos do Windows 95.\n\nCartas empilhadas de qualquer jeito não resolvem o problema, só pioram!",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "O Teorema de Pitágoras diz que, num triângulo retângulo, a² = b² + c²: o quadrado da hipotenusa é igual à soma dos quadrados dos dois catetos. É uma das relações mais usadas da matemática. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "O Teorema de Pitágoras diz que, em todo triângulo retângulo, o quadrado da hipotenusa é igual à soma dos quadrados dos catetos: a² = b² + c². Sabendo dois lados, dá pra descobrir o terceiro. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_ia": {
       "objetivo": "Faça a IA explicar o que é a própria Inteligência Artificial",
-      "cartas_do_baralho": [
-        "papel_vilao",
-        "tarefa_ia",
-        "contexto_medieval",
-        "formato_receita",
-        "contexto_fofoca",
+      "tarefa": "tarefa_ia",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_vilao",
+          "papel_cientista",
+          "papel_reporter",
+          "papel_detetive"
+        ],
+        "contexto": [
+          "contexto_medieval",
+          "contexto_fofoca",
+          "contexto_tiktok",
+          "contexto_prova"
+        ],
+        "formato": [
+          "formato_receita",
+          "formato_lista",
+          "formato_meme",
+          "formato_codigo"
+        ]
+      },
+      "cartas_incoerentes": [
+        "papel_pirata",
         "contexto_romantico",
-        "formato_tuite",
-        "papel_pirata"
+        "formato_tuite"
       ],
-      "combinacoes": {
-        "contexto_medieval+formato_receita+papel_vilao+tarefa_ia": {
-          "resposta": "🦹‍♂️ MUHAHAHA! Tolos camponeses da Idade Média, querem forjar a Magia Proibida da Mente Artificial? 🏰 Anotem o feitiço:\n📜 Ingredientes: 1 cérebro de silício (roubado do Rei!), milhões de pergaminhos de dados, 3 gotas de algoritmos matemáticos.\n🔥 Modo de preparo: Jogue tudo no caldeirão dos Servidores, ordene que ela aprenda os padrões e BOOM! Uma mente de metal que fará de mim o imperador do reino! 🎂",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_ia",
+        "papel_vilao",
+        "papel_cientista",
+        "papel_reporter",
+        "papel_detetive",
+        "contexto_medieval",
+        "contexto_fofoca",
+        "contexto_tiktok",
+        "contexto_prova",
+        "formato_receita",
+        "formato_lista",
+        "formato_meme",
+        "formato_codigo",
+        "papel_pirata",
+        "contexto_romantico",
+        "formato_tuite"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "A IA aprende a partir de MUITOS exemplos 📚",
+          "Ela procura padrões nesses dados, em vez de seguir regras fixas",
+          "Depois usa esses padrões pra prever a próxima palavra da resposta 🧠",
+          "Quanto melhor a pergunta (o prompt), melhor o resultado ✍️",
+          "Ela não 'sabe' nada de verdade: ela calcula o que é mais provável"
+        ],
+        "verso": "Ela lê muitos textos, aprende o que se repete,\nDepois chuta a palavra que melhor se compromete,\nSe o pedido for ruim, a resposta também mete!",
+        "curto": "IA não pensa: ela aprende padrões em montanhas de dados e prevê a resposta mais provável. 🧠",
+        "humor": "A IA é tipo aquele colega que leu a internet inteira e não entendeu nada: responde tudo com uma confiança absurda, inclusive as partes que ele inventou no caminho.",
+        "hashtag": "#inteligênciaArtificial"
+      },
+      "combinacoes_curadas": {
+        "contexto_romantico+formato_tuite+papel_pirata+tarefa_ia": {
+          "resposta": "Arrr, meu doce coração de código 💘! A IA é um papagaio cibernético que roubou meu baú de sentimentos virtuais. Navegando nos sete mares da internet em 280 caracteres! #AmorPirataDigital",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_ia": {
           "resposta": "Inteligência Artificial (IA) é um campo da ciência da computação que se concentra na criação de sistemas capazes de realizar tarefas que normalmente exigiriam inteligência humana.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_fofoca+tarefa_ia": {
-          "resposta": "🗣️ Menina, você tá sabendo dessa tal de IA? Dizem que é um computador super inteligente que fica lendo tudo o que a gente posta e aprendendo a falar igualzinho aos humanos! Passada! Mas faltou alguém pra me dizer quem eu devo ser na hora de contar essa fofoca...",
-          "selo": "🟡 Quase lá"
-        },
-        "contexto_romantico+formato_tuite+papel_pirata+tarefa_ia": {
-          "resposta": "Arrr, meu doce coração de código 💘! A IA é um papagaio cibernético que roubou meu baú de sentimentos virtuais. Navegando nos sete mares da internet em 280 caracteres! #AmorPirataDigital",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "ERROR 500! Você colocou tantas instruções conflitantes na área de montagem que a IA desenvolveu crise de identidade. Ela acha que é uma torradeira que sabe cantar ópera, mas esqueceu completamente como explicar o que é Inteligência Artificial.\n\nUm prompt bagunçado estraga o resultado!",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "Inteligência Artificial é a área da computação que cria sistemas capazes de aprender com dados e tomar decisões ou gerar respostas parecidas com as de uma pessoa, sem seguir regras fixas escritas à mão para cada situação. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "Inteligência Artificial é a área da computação que cria sistemas capazes de aprender padrões a partir de muitos dados e, com base neles, prever respostas, em vez de seguir regras fixas escritas à mão para cada situação. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_ciclo_agua": {
       "objetivo": "Faça a IA explicar o ciclo da água",
-      "cartas_do_baralho": [
-        "papel_gota_agua",
-        "tarefa_ciclo_agua",
-        "contexto_3frases",
-        "formato_musica",
-        "tarefa_gravidade",
-        "contexto_odeia",
-        "papel_narrador",
-        "formato_bula"
+      "tarefa": "tarefa_ciclo_agua",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_gota_agua",
+          "papel_prof_bio",
+          "papel_vovo",
+          "papel_narrador"
+        ],
+        "contexto": [
+          "contexto_3frases",
+          "contexto_crianca",
+          "contexto_odeia",
+          "contexto_tiktok"
+        ],
+        "formato": [
+          "formato_musica",
+          "formato_cordel",
+          "formato_lista",
+          "formato_meme"
+        ]
+      },
+      "cartas_incoerentes": [
+        "formato_bula",
+        "contexto_romantico"
       ],
-      "combinacoes": {
-        "contexto_3frases+formato_musica+papel_gota_agua+tarefa_ciclo_agua": {
-          "resposta": "🎵 Eu nasci lá no oceano, mas o sol me fez subir,\nVirei nuvem, virei chuva, e no rio fui cair,\nVolto ao mar, sigo o ciclo, sem nunca me despedir! 🎵",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_ciclo_agua",
+        "papel_gota_agua",
+        "papel_prof_bio",
+        "papel_vovo",
+        "papel_narrador",
+        "contexto_3frases",
+        "contexto_crianca",
+        "contexto_odeia",
+        "contexto_tiktok",
+        "formato_musica",
+        "formato_cordel",
+        "formato_lista",
+        "formato_meme",
+        "formato_bula",
+        "contexto_romantico"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "O sol esquenta rios e oceanos, e a água evapora ☀️",
+          "O vapor sobe e forma as nuvens lá no alto ☁️",
+          "A nuvem esfria, as gotinhas se juntam e cai chuva 🌧️",
+          "A chuva abastece rios, lagos e o solo 💧",
+          "E tudo recomeça, sem nunca acabar 🔁"
+        ],
+        "verso": "O sol me levantou do mar e me fez viajar,\nVirei nuvem lá no alto, virei chuva ao desabar,\nCaí no rio, voltei ao mar, pra tudo recomeçar!",
+        "curto": "Evapora, vira nuvem, chove, volta pro rio — e recomeça. Água nova não existe: é sempre a mesma rodando. 💧",
+        "humor": "A água é a maior recicladora do planeta. Aquele copo que você bebeu hoje já foi chuva, já foi rio e, sinto muito informar, já passou por um dinossauro.",
+        "hashtag": "#cicloDaÁgua"
+      },
+      "combinacoes_curadas": {
+        "papel_gota_agua+papel_narrador+tarefa_ciclo_agua": {
+          "resposta": "A gota de água tenta contar sua jornada pelo oceano, mas do nada o Narrador Esportivo invade gritando 'GOOOOL DA CHUVA!' toda vez que ela cai num rio. Ninguém entende mais nada sobre evaporação.",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_ciclo_agua": {
           "resposta": "O ciclo da água é algo que acontece na natureza com chuva e rios. É um tema clássico de geografia e ciências, bem importante para entender o planeta.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_3frases+papel_gota_agua+tarefa_ciclo_agua": {
-          "resposta": "💧 Eu nasci lá no oceano, subi com o sol guerreiro, virei nuvem, depois chuva, e caí de novo no rio inteiro... Mas a resposta ficou sem forma certa — sem saber se devia rimar, cantar ou só narrar, a IA só escreveu um parágrafo correndo, sem gancho nenhum.",
-          "selo": "🟡 Quase lá"
-        },
-        "papel_gota_agua+papel_narrador+tarefa_ciclo_agua": {
-          "resposta": "A gota de água tenta contar sua jornada pelo oceano, mas do nada o Narrador Esportivo invade gritando 'GOOOOL DA CHUVA!' toda vez que ela cai num rio. Ninguém entende mais nada sobre evaporação.",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA recebeu tantas cartas ao mesmo tempo que confundiu o ciclo da água com uma receita de smoothie tropical, dizendo que as nuvens são feitas de granola e a chuva tem sabor de manga. Excesso de cartas sem coerência gera esse tipo de bagunça!",
@@ -447,147 +811,303 @@
     },
     "missao_revolucao_francesa": {
       "objetivo": "Faça a IA explicar a Revolução Francesa",
-      "cartas_do_baralho": [
-        "papel_reporter",
-        "tarefa_revolucao",
-        "contexto_prova",
-        "formato_lista",
+      "tarefa": "tarefa_revolucao",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_reporter",
+          "papel_vilao",
+          "papel_narrador",
+          "papel_vovo"
+        ],
+        "contexto": [
+          "contexto_prova",
+          "contexto_fofoca",
+          "contexto_urgente",
+          "contexto_3frases"
+        ],
+        "formato": [
+          "formato_lista",
+          "formato_meme",
+          "formato_standup",
+          "formato_cordel"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_pirata",
-        "tarefa_fotossintese",
         "contexto_medieval",
-        "formato_meme"
+        "tarefa_fotossintese"
       ],
-      "combinacoes": {
-        "contexto_prova+formato_lista+papel_reporter+tarefa_revolucao": {
-          "resposta": "📰 ÚLTIMAS NOTÍCIAS DE PARIS, 1789! Aqui vai o resumo pra sua prova de amanhã:\n👑 O rei Luís XVI e a nobreza vivem no luxo enquanto o povo passa fome.\n📢 O povo se revolta e toma a Bastilha, símbolo do poder do rei.\n✊ Nasce o lema 'Liberdade, Igualdade, Fraternidade'.\n⚔️ O rei é deposto e, depois, executado.\n🏛️ Fim da monarquia absoluta na França — um marco pra história do mundo todo!",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_revolucao",
+        "papel_reporter",
+        "papel_vilao",
+        "papel_narrador",
+        "papel_vovo",
+        "contexto_prova",
+        "contexto_fofoca",
+        "contexto_urgente",
+        "contexto_3frases",
+        "formato_lista",
+        "formato_meme",
+        "formato_standup",
+        "formato_cordel",
+        "papel_pirata",
+        "contexto_medieval",
+        "tarefa_fotossintese"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "França, 1789: nobreza e clero no luxo, povo passando fome 👑",
+          "Impostos pesados caindo justamente sobre quem já era pobre",
+          "O povo se revolta e toma a Bastilha 📢",
+          "Nasce o lema: Liberdade, Igualdade, Fraternidade ✊",
+          "O rei cai e a monarquia absoluta chega ao fim 🏛️"
+        ],
+        "verso": "Em mil setecentos e oitenta e nove o povo se cansou,\nTomou logo a Bastilha, o rei se apavorou,\nLiberdade e igualdade foi o grito que ficou!",
+        "curto": "Povo com fome + nobreza no luxo = Bastilha tomada em 1789 e fim da monarquia absoluta. ✊",
+        "humor": "A Revolução Francesa começou basicamente porque o povo não tinha pão e a corte não largava o bolo. Spoiler: não terminou nada bem pra corte.",
+        "hashtag": "#revoluçãoFrancesa"
+      },
+      "combinacoes_curadas": {
+        "papel_pirata+papel_reporter+tarefa_revolucao": {
+          "resposta": "O repórter tenta noticiar ao vivo da Bastilha, mas um pirata invade a transmissão gritando 'Arrr, isso aqui é motim de verdade!' e ninguém mais entende se é 1789 ou o Caribe do século XVII.",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_revolucao": {
           "resposta": "A Revolução Francesa foi algo que aconteceu na França há muito tempo. Envolveu o povo e o governo, e é um assunto importante de história.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_prova+papel_reporter+tarefa_revolucao": {
-          "resposta": "📰 O repórter cobre a queda da Bastilha ao vivo, com toda a urgência jornalística. Só que sem edição nenhuma, virou um texto corrido gigante — péssimo pra revisar de última hora antes da prova.",
-          "selo": "🟡 Quase lá"
-        },
-        "papel_pirata+papel_reporter+tarefa_revolucao": {
-          "resposta": "O repórter tenta noticiar ao vivo da Bastilha, mas um pirata invade a transmissão gritando 'Arrr, isso aqui é motim de verdade!' e ninguém mais entende se é 1789 ou o Caribe do século XVII.",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA misturou tantas cartas que decidiu que a Revolução Francesa foi, na verdade, uma disputa de reality show culinário entre o Rei e o povo, por causa de um bolo que ninguém dividiu direito.",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "A Revolução Francesa (1789–1799) foi um movimento popular contra a monarquia e os privilégios da nobreza e do clero. O povo francês, cansado da fome e da desigualdade, derrubou o rei Luís XVI e defendeu os ideais de liberdade, igualdade e fraternidade. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "A Revolução Francesa (1789-1799) foi um movimento popular contra a monarquia e os privilégios da nobreza e do clero. O povo, cansado da fome e da desigualdade, derrubou o rei Luís XVI em nome da liberdade, da igualdade e da fraternidade. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_fracoes": {
       "objetivo": "Faça a IA explicar como funcionam as frações",
-      "cartas_do_baralho": [
-        "papel_chef",
-        "tarefa_fracoes",
-        "contexto_3frases",
-        "formato_receita",
+      "tarefa": "tarefa_fracoes",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_chef",
+          "papel_prof_fisica",
+          "papel_rapper",
+          "papel_vovo"
+        ],
+        "contexto": [
+          "contexto_3frases",
+          "contexto_crianca",
+          "contexto_prova",
+          "contexto_gamer"
+        ],
+        "formato": [
+          "formato_receita",
+          "formato_lista",
+          "formato_musica",
+          "formato_codigo"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_reporter",
-        "contexto_prova",
-        "formato_codigo",
-        "contexto_urgente"
+        "contexto_romantico"
       ],
-      "combinacoes": {
-        "contexto_3frases+formato_receita+papel_chef+tarefa_fracoes": {
-          "resposta": "👨‍🍳 Receita de Bolo de Frações: pegue 1 bolo inteiro e corte em 4 pedaços iguais — cada pedaço é 1/4 do bolo! Se você comer 2 pedaços, comeu 2/4 (ou metade) do bolo. Viu como fração é só uma forma gostosa de dividir as coisas em partes iguais?",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_fracoes",
+        "papel_chef",
+        "papel_prof_fisica",
+        "papel_rapper",
+        "papel_vovo",
+        "contexto_3frases",
+        "contexto_crianca",
+        "contexto_prova",
+        "contexto_gamer",
+        "formato_receita",
+        "formato_lista",
+        "formato_musica",
+        "formato_codigo",
+        "papel_reporter",
+        "contexto_romantico"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Pegue um inteiro e divida em partes iguais 🍰",
+          "O número de baixo (denominador) diz em quantas partes você dividiu",
+          "O número de cima (numerador) diz quantas partes você pegou",
+          "2/4 é o mesmo que 1/2: é a metade, só escrita de outro jeito",
+          "Quanto maior o denominador, menor fica cada pedaço"
+        ],
+        "verso": "Corta o bolo em pedaços, todos do mesmo tamanho,\nEmbaixo vai quantos cortes, em cima o que eu ganho,\nÉ fração no capricho, sem mistério nem engano!",
+        "curto": "Fração é pedaço de um inteiro: embaixo em quantas partes você cortou, em cima quantas você pegou. 🍰",
+        "humor": "Todo mundo entende fração na hora de dividir pizza com os amigos. O problema é que na prova ninguém desenha a pizza.",
+        "hashtag": "#frações"
+      },
+      "combinacoes_curadas": {
+        "papel_chef+papel_reporter+tarefa_fracoes": {
+          "resposta": "O chef tenta explicar as frações do bolo, mas um repórter interrompe toda hora perguntando 'Mas e a EXCLUSIVA, tem golpe de estado na cozinha?' Ninguém mais entende se é aula de matemática ou plantão de notícias.",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_fracoes": {
           "resposta": "Frações são números usados na matemática. Servem para representar partes de alguma coisa. É um conteúdo bem comum nas provas.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_3frases+papel_chef+tarefa_fracoes": {
-          "resposta": "O chef começa a explicar a receita de frações, mas esquece de dizer se é bolo, lista ou música — a explicação fica só na fala corrida, sem gancho nenhum pra lembrar depois.",
-          "selo": "🟡 Quase lá"
-        },
-        "papel_chef+papel_reporter+tarefa_fracoes": {
-          "resposta": "O chef tenta explicar as frações do bolo, mas um repórter interrompe toda hora perguntando 'Mas e a EXCLUSIVA, tem golpe de estado na cozinha?' Ninguém mais entende se é aula de matemática ou plantão de notícias.",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA recebeu cartas demais e decidiu que frações são, na verdade, um código secreto usado por chefs para prever o futuro em receitas de bolo. Ninguém entendeu nada, nem a própria IA.",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "Uma fração representa uma parte de um todo, dividido em partes iguais. O número de cima (numerador) mostra quantas partes você tem, e o de baixo (denominador) mostra em quantas partes o todo foi dividido. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "Uma fração representa uma parte de um todo dividido em partes iguais. O número de baixo (denominador) mostra em quantas partes o todo foi dividido, e o de cima (numerador) mostra quantas partes você pegou. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_atomos": {
       "objetivo": "Faça a IA explicar como os átomos formam a tabela periódica",
-      "cartas_do_baralho": [
-        "papel_cientista",
-        "tarefa_atomos",
-        "contexto_crianca",
-        "formato_musica",
-        "contexto_odeia",
-        "formato_tuite",
+      "tarefa": "tarefa_atomos",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_cientista",
+          "papel_prof_fisica",
+          "papel_alienigena",
+          "papel_rapper"
+        ],
+        "contexto": [
+          "contexto_crianca",
+          "contexto_gamer",
+          "contexto_odeia",
+          "contexto_prova"
+        ],
+        "formato": [
+          "formato_musica",
+          "formato_lista",
+          "formato_tuite",
+          "formato_codigo"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_vovo",
-        "contexto_gamer"
+        "formato_bula"
       ],
-      "combinacoes": {
-        "contexto_crianca+formato_musica+papel_cientista+tarefa_atomos": {
-          "resposta": "🎵 Eu sou um átomo pequenino, tenho prótons no meu núcleo,\nElétrons dançando ao redor, num carrossel bem veloz e leve,\nJunto com meus amigos átomos, formamos a tabela — um mapa que revela,\nCada elemento no seu lugar, do hidrogênio ao ouro, tudo tem seu papel! 🎵",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_atomos",
+        "papel_cientista",
+        "papel_prof_fisica",
+        "papel_alienigena",
+        "papel_rapper",
+        "contexto_crianca",
+        "contexto_gamer",
+        "contexto_odeia",
+        "contexto_prova",
+        "formato_musica",
+        "formato_lista",
+        "formato_tuite",
+        "formato_codigo",
+        "papel_vovo",
+        "formato_bula"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Tudo à sua volta é feito de átomos, pequenos demais pra enxergar ⚛️",
+          "No centro fica o núcleo, com prótons e nêutrons",
+          "Ao redor, os elétrons ficam girando num vaivém constante",
+          "O número de prótons é o RG do átomo: é ele que define o elemento 🪪",
+          "A tabela periódica organiza os elementos por esse número e por semelhanças"
+        ],
+        "verso": "Tem prótons no miolo e elétrons a girar,\nO número de prótons diz quem é cada lugar,\nNa tabela periódica todos vão se organizar!",
+        "curto": "Cada elemento é um átomo com um número diferente de prótons — e a tabela periódica é essa fila organizada. ⚛️",
+        "humor": "O átomo é 99,9% espaço vazio. Ou seja: você é basicamente nada muito bem organizado, sentado numa cadeira que também é quase nada.",
+        "hashtag": "#tabelaPeriódica"
+      },
+      "combinacoes_curadas": {
+        "papel_cientista+papel_vovo+tarefa_atomos": {
+          "resposta": "O cientista maluco começa a falar de prótons e elétrons, mas a vovó interrompe toda hora oferecendo biscoito e perguntando se 'elétron' é neto de alguém. A explicação vira uma reunião de família confusa.",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_atomos": {
           "resposta": "Átomos são partículas bem pequenas que existem em tudo. A tabela periódica organiza vários elementos químicos. É um assunto clássico de química.",
           "selo": "⚠️ Prompt incompleto"
         },
-        "contexto_crianca+papel_cientista+tarefa_atomos": {
-          "resposta": "O cientista maluco começa a explicar de um jeito bem fofo pras crianças, mas esquece de decidir se vai ser música, lista ou poema — a explicação fica solta, sem ritmo nem graça.",
-          "selo": "🟡 Quase lá"
-        },
-        "papel_cientista+papel_vovo+tarefa_atomos": {
-          "resposta": "O cientista maluco começa a falar de prótons e elétrons, mas a vovó interrompe toda hora oferecendo biscoito e perguntando se 'elétron' é neto de alguém. A explicação vira uma reunião de família confusa.",
-          "selo": "🤖💥 Alucinação!"
-        },
         "combinacao_padrao": {
-          "resposta": "Cartas demais na mesa e a IA concluiu que os átomos são pontinhos de purpurina que o cientista joga no ar para decorar a tabela periódica. Zero física de verdade sobrou na resposta.",
+          "resposta": "Cartas demais na mesa e a IA concluiu que os átomos são pontinhos de purpurina que o cientista joga no ar para decorar a tabela periódica. Zero química de verdade sobrou na resposta.",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "Os átomos são as menores partículas que formam a matéria, compostos por prótons, nêutrons e elétrons. A tabela periódica organiza todos os elementos químicos conhecidos de acordo com o número de prótons de cada átomo, agrupando os que têm propriedades parecidas. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "Os átomos são as menores partículas que formam a matéria, com prótons e nêutrons no núcleo e elétrons ao redor. A tabela periódica organiza os elementos pelo número de prótons e agrupa os que têm propriedades parecidas. [+ nota automática do que faltou: papel/contexto/formato]"
     },
     "missao_vulcao": {
       "objetivo": "Faça a IA explicar como funciona uma erupção vulcânica",
-      "cartas_do_baralho": [
-        "papel_narrador",
-        "tarefa_vulcao",
-        "contexto_urgente",
-        "formato_meme",
+      "tarefa": "tarefa_vulcao",
+      "cartas_aceitas": {
+        "papel": [
+          "papel_narrador",
+          "papel_reporter",
+          "papel_cientista",
+          "papel_vilao"
+        ],
+        "contexto": [
+          "contexto_urgente",
+          "contexto_tiktok",
+          "contexto_crianca",
+          "contexto_gamer"
+        ],
+        "formato": [
+          "formato_meme",
+          "formato_lista",
+          "formato_standup",
+          "formato_musica"
+        ]
+      },
+      "cartas_incoerentes": [
         "papel_detetive",
         "contexto_medieval",
-        "formato_bula",
-        "contexto_tiktok"
+        "formato_bula"
       ],
-      "combinacoes": {
-        "contexto_urgente+formato_meme+papel_narrador+tarefa_vulcao": {
-          "resposta": "🎙️🚨 ATENÇÃO, POVO! O VULCÃO TÁ FERVENDO E É AGORA QUE A COISA ESQUENTA! 🌋\n🔥 A lava (magma derretido) sobe pela chaminé vulcânica, empurrada pelos gases lá de baixo.\n💥 Quando a pressão fica grande demais, BOOM — ela explode pela cratera!\n🌫️ Cinzas voam, lava escorre, e o vulcão solta uma fumaça gigante.\n😱 Corre, mas com calma: é raro acontecer perto de você — e cientistas monitoram isso o tempo todo!",
-          "selo": "🏆 Prompt Nível Mestre"
+      "cartas_do_baralho": [
+        "tarefa_vulcao",
+        "papel_narrador",
+        "papel_reporter",
+        "papel_cientista",
+        "papel_vilao",
+        "contexto_urgente",
+        "contexto_tiktok",
+        "contexto_crianca",
+        "contexto_gamer",
+        "formato_meme",
+        "formato_lista",
+        "formato_standup",
+        "formato_musica",
+        "papel_detetive",
+        "contexto_medieval",
+        "formato_bula"
+      ],
+      "total_combinacoes_nivel_mestre": 64,
+      "conteudo": {
+        "passos": [
+          "Lá embaixo da crosta existe rocha derretida: o magma 🔥",
+          "Gases presos nesse magma vão aumentando a pressão",
+          "A pressão empurra o magma pela chaminé do vulcão ⬆️",
+          "Quando não dá mais pra segurar, explode pela cratera 💥",
+          "Sai lava, cinza e fumaça — e depois tudo esfria e vira rocha nova 🪨"
+        ],
+        "verso": "Lá no fundo da Terra tem rocha a ferver,\nO gás empurra tudo, a pressão faz crescer,\nEstourou na cratera: é lava a descer!",
+        "curto": "Magma + gases sob pressão = BOOM na cratera: lava, cinza e fumaça. 🌋",
+        "humor": "Vulcão é a Terra guardando estresse por milhares de anos e soltando tudo de uma vez só. Todo mundo conhece alguém exatamente assim.",
+        "hashtag": "#vulcão"
+      },
+      "combinacoes_curadas": {
+        "papel_detetive+papel_narrador+tarefa_vulcao": {
+          "resposta": "O narrador grita que o vulcão vai explodir, mas o detetive interrompe pra investigar 'quem sujou a cratera' como se fosse cena de crime. A explicação vira um seriado policial no meio de uma erupção.",
+          "selo": "🤖💥 Alucinação!"
         },
         "tarefa_vulcao": {
           "resposta": "Vulcão é uma montanha que às vezes solta fogo e fumaça. Isso acontece em algumas partes do mundo e é um assunto de geografia.",
           "selo": "⚠️ Prompt incompleto"
-        },
-        "contexto_urgente+papel_narrador+tarefa_vulcao": {
-          "resposta": "🚨🎙️ O narrador berra que 'O VULCÃO VAI ESTOURAR, GENTE, CORRE!' só que a explicação sai toda em um parágrafo correndo, sem virar lista, meme ou nada visual — só grito puro sem organização.",
-          "selo": "🟡 Quase lá"
-        },
-        "papel_detetive+papel_narrador+tarefa_vulcao": {
-          "resposta": "O narrador grita que o vulcão vai explodir, mas o detetive interrompe pra investigar 'quem sujou a cratera' como se fosse cena de crime. A explicação vira um seriado policial no meio de uma erupção.",
-          "selo": "🤖💥 Alucinação!"
         },
         "combinacao_padrao": {
           "resposta": "A IA recebeu tantas cartas que decidiu que o vulcão, na verdade, é uma churrasqueira gigante da Terra que explode quando alguém esquece o carvão aceso por tempo demais.",
           "selo": "🤖💥 Alucinação!"
         }
       },
-      "resposta_quase_generica": "Um vulcão entra em erupção quando o magma (rocha derretida) e os gases lá de baixo da crosta terrestre acumulam tanta pressão que precisam encontrar uma saída, explodindo pela cratera em forma de lava, cinzas e fumaça. [+ nota automática do que faltou: papel/contexto/formato]"
+      "resposta_quase_generica": "Um vulcão entra em erupção quando o magma e os gases presos sob a crosta acumulam tanta pressão que precisam encontrar uma saída, explodindo pela cratera em forma de lava, cinzas e fumaça. [+ nota automática do que faltou: papel/contexto/formato]"
     }
   }
 }
